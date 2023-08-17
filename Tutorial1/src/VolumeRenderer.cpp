@@ -1,5 +1,18 @@
 #include "VolumeRenderer.h"
-#include <Magick++.h>
+#include <cstdio>
+// #include <Magick++.h>
+
+#define STB_IMAGE_STATIC
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+// #ifndef STB_IMAGE_WRITE_IMPLEMENTATION
+// #define STBI_MSC_SECURE_CRT
+// http://blawat2015.no-ip.com/~mieki256/diary/202207.html
+#define STB_IMAGE_WRITE_STATIC
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include "stb_image_write.h"
+// #endif
+
 
 VolumeRenderer::VolumeRenderer(int _width, int _height, Grid* dataSource)
 	: width(_width), height(_height), volumeData(dataSource)
@@ -138,10 +151,16 @@ float VolumeRenderer::sampleLighting(const Vec3& x, const Vec3& lightPosition, f
 }
 
 void VolumeRenderer::writeImage(const char *path) {
-	// We'll use ImageMagick's c++ bindings here to make life way simpler.
-	// This gives us support for PNGs, JPEGs, BMP, TGA, etc for free.
-	Magick::Image output;
-	output.read(width,height,"RGBA",Magick::FloatPixel,image);
-	output.write(path);
+	// // We'll use ImageMagick's c++ bindings here to make life way simpler.
+	// // This gives us support for PNGs, JPEGs, BMP, TGA, etc for free.
+	// Magick::Image output;
+	// output.read(width,height,"RGBA",Magick::FloatPixel,image);
+	// output.write(path);
+
+	// stbi
+	// stbi_write_png("output.png", width, height, channels, data, width * channels);
+	const int channels=4;// rgba
+	printf("write image: %s\n", path);
+	stbi_write_png(path, width, height, channels, image, width * channels);
 }
 

@@ -1,3 +1,4 @@
+#include <cstdio>
 #include "VolumeRenderer.h"
 #include "Grid.h"
 
@@ -24,14 +25,22 @@ void populateGrid(Grid* grid) {
 }
 
 int main(int argc, char* const argv[]) {
+	printf("hello!!!!\n");
+
 	Grid grid(128,128,128, Vec3(-1,-1,-1), Vec3(1,1,1));	
-	VolumeRenderer renderer(512,512, &grid);
+	// VolumeRenderer renderer(512,512, &grid);
+	VolumeRenderer renderer(32,32, &grid);
 
 	// Let's fill the grid with something to render.
 	populateGrid(&grid);
 
-	// Ray marching
-	renderer.render(Vec3(1,1,1), Vec3(0,0,0), 2, 128);
+	// // Ray marching
+	// renderer.render(Vec3(1,1,1), Vec3(0,0,0), 2, 128);
+	Vec3 cameraPosition(1, 1, 1);
+	Vec3 cameraFocus(0, 0, 0);
+	float marchDistance = 2;
+	int marchingStepCount = 128;
+	renderer.render(cameraPosition, cameraFocus, marchDistance, marchingStepCount);
 
 	// Output an image to look at.
 	renderer.writeImage("output.png");

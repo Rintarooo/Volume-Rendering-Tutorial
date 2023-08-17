@@ -20,6 +20,7 @@ public:
 		*  @param[in] _bmax The upper corner of the AABB for the grid
 		*/
 	Grid(int _nx, int _ny, int _nz, Vec3 _bmin, Vec3 _bmax);
+	~Grid();
 
 	//! Set the value of a single voxel in the grid
 	void setVoxel(int x, int y, int z, float value);

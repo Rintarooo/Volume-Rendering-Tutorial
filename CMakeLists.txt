@@ -15,8 +15,8 @@ include_directories(
 
 add_executable(main 
 	Tutorial1/src/main.cpp
-	Tutorial1/src/grid.cpp
-	Tutorial1/src/VolumeRender.cpp)
+	Tutorial1/src/Grid.cpp
+	Tutorial1/src/VolumeRenderer.cpp)
 
 target_link_libraries(main 
 	${OPENGL_LIBRARIES}

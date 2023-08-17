@@ -58,3 +58,9 @@ float Grid::read(const Vec3& x) const {
 		data[GRID_INDEX(i  ,j+1,k+1)] * wi.x * w.y * w.z +
 		data[GRID_INDEX(i+1,j+1,k+1)] * w.x * w.y * w.z ;
 }
+
+Grid::~Grid() 
+{
+	printf("Delete allocated memory\n");
+	delete[] data;
+}

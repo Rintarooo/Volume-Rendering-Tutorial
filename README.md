@@ -21,6 +21,9 @@ After that, all that is needed in order to build is to run make. The executable 
 git clone https://github.com/g-truc/glm.git
 mkdir include
 mv ./glm/glm/ ./include
+# Install stbi single header for writing image
+wget -O Tutorial1/include/stb_image.h https://github.com/nothings/stb/blob/master/stb_image.h?raw=true 
+wget -O Tutorial1/include/stb_image_write.h https://github.com/nothings/stb/blob/master/stb_image_write.h?raw=true
 ```
 
 ## GCP VM
