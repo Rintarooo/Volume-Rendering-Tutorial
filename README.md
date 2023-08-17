@@ -14,3 +14,27 @@ Fedora: yum install ImageMagick-c++-devel
 After that, all that is needed in order to build is to run make. The executable is placed in the
 "bin" folder.
 
+## Usage
+## setup
+```bash
+# Install GLM
+git clone https://github.com/g-truc/glm.git
+mkdir include
+mv ./glm/glm/ ./include
+```
+
+## GCP VM
+```bash
+# Dockerfileからビルド
+docker-compose -f .devcontainer/docker-compose.yml build opengl-vm
+# Xサーバーのアクセス権限を与える
+xhost local:root
+# コンテナ入る
+docker-compose -f .devcontainer/docker-compose.yml run --rm opengl-vm /bin/bash
+# GUI表示出来るか確認
+xeyes
+# C++ビルド
+./build.sh
+```
+
+works on OpenGL 3.3 version
