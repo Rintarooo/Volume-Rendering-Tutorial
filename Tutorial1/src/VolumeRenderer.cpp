@@ -1,30 +1,38 @@
 #include "VolumeRenderer.h"
 #include <cstdio>
-// #include <Magick++.h>
+#include <Magick++.h>
 
-#define STB_IMAGE_STATIC
-#define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
-// #ifndef STB_IMAGE_WRITE_IMPLEMENTATION
-// #define STBI_MSC_SECURE_CRT
-// http://blawat2015.no-ip.com/~mieki256/diary/202207.html
-#define STB_IMAGE_WRITE_STATIC
-#define STB_IMAGE_WRITE_IMPLEMENTATION
-#include "stb_image_write.h"
-// #endif
+// #define STB_IMAGE_STATIC
+// #define STB_IMAGE_IMPLEMENTATION
+// #include "stb_image.h"
+// // #ifndef STB_IMAGE_WRITE_IMPLEMENTATION
+// // #define STBI_MSC_SECURE_CRT
+// // http://blawat2015.no-ip.com/~mieki256/diary/202207.html
+// #define STB_IMAGE_WRITE_STATIC
+// #define STB_IMAGE_WRITE_IMPLEMENTATION
+// #include "stb_image_write.h"
+// // #endif
 
 
 VolumeRenderer::VolumeRenderer(int _width, int _height, Grid* dataSource)
 	: width(_width), height(_height), volumeData(dataSource)
 {
+	// 4 is rgba channel number
 	int N = width * height * 4;
 
 	// Allocate pixels for our output image (RGBA)
 	image = new float[N];
 
+	// http://chanhaeng.blogspot.com/2018/12/how-to-use-stbimagewrite.html
+	 /*** NOTICE!! You have to use uint8_t array to pass in stb function  ***/
+	// Because the size of color is normally 255, 8bit.
+	// If you don't use this one, you will get a weird imge.
+	// uint8_t* image = new uint8_t[N];
+
 	// Clear the image to black
 	for(int i=0;i<N;++i) {
 		image[i] = 0.f;
+		// image[i]=0;
 	}
 }
 
@@ -153,14 +161,14 @@ float VolumeRenderer::sampleLighting(const Vec3& x, const Vec3& lightPosition, f
 void VolumeRenderer::writeImage(const char *path) {
 	// // We'll use ImageMagick's c++ bindings here to make life way simpler.
 	// // This gives us support for PNGs, JPEGs, BMP, TGA, etc for free.
-	// Magick::Image output;
-	// output.read(width,height,"RGBA",Magick::FloatPixel,image);
-	// output.write(path);
+	Magick::Image output;
+	output.read(width,height,"RGBA",Magick::FloatPixel,image);
+	output.write(path);
 
-	// stbi
-	// stbi_write_png("output.png", width, height, channels, data, width * channels);
-	const int channels=4;// rgba
-	printf("write image: %s\n", path);
-	stbi_write_png(path, width, height, channels, image, width * channels);
+	// // stbi
+	// // stbi_write_png("output.png", width, height, channels, data, width * channels);
+	// const int channels=4;// rgba
+	// printf("write image: %s\n", path);
+	// stbi_write_png(path, width, height, channels, image, width * channels);
 }
 

@@ -40,12 +40,15 @@ RUN apt -y update --no-install-recommends \
     && apt autoremove -y \
 	&& apt clean -y 
 
-# install GLFW, GLEW, GLUT for OpenGL
+# install GLFW, GLEW, GLUT for OpenGL, ImageMagick
 # https://grainrigi.hatenablog.com/entry/2017/08/27/144218
 RUN apt -y update --no-install-recommends \
     && apt install -y --no-install-recommends \
     libglew-dev \
     libglfw3-dev \
     freeglut3-dev \
+    mesa-utils  \
+    imagemagick \
+    libmagick++-dev \
     && apt autoremove -y \
 	&& apt clean -y 

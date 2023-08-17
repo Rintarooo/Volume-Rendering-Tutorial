@@ -1,7 +1,7 @@
 version: "2"
 services:
-  opengl-vm:
-    image: opengl-vm:latest
+  volume-render:
+    image: volume-render:latest
     build: 
       context: ..
       dockerfile: ./.devcontainer/Dockerfiles/Dockerfile

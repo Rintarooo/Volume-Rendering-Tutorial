@@ -29,7 +29,8 @@ int main(int argc, char* const argv[]) {
 
 	Grid grid(128,128,128, Vec3(-1,-1,-1), Vec3(1,1,1));	
 	// VolumeRenderer renderer(512,512, &grid);
-	VolumeRenderer renderer(32,32, &grid);
+	// VolumeRenderer renderer(32,32, &grid);
+	VolumeRenderer renderer(256,256, &grid);
 
 	// Let's fill the grid with something to render.
 	populateGrid(&grid);
