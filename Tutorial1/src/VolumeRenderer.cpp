@@ -47,11 +47,13 @@ void VolumeRenderer::render(const Vec3& cameraPosition, const Vec3& cameraFocus,
 	// we can construct the view space.
 	
 	Vec3 lookDirection = (cameraFocus - cameraPosition).normalized();
-	Vec3 camRight = lookDirection ^ Vec3(0,1,0); // Assume there is no camera "roll".
+	Vec3 camRight = lookDirection ^ Vec3(0,1,0); // Assume there is no camera "roll".　Vec3 operator^ cross calculation
 	Vec3 camUp = camRight ^ lookDirection;
 
 	// compute distance to the camera plane from the field of view, and aspect ratio
-	const float fov = 80.f;
+	const float fov = 60.f;//90.f;//35.f;//120.f;//80.f;//150.f;//45.f;//
+	// degree2radian = fov*3.141592659f/180.f
+	// カメラからスクリーンまでの距離
 	float cameraPlaneDistance = 1.f / (2.f * tanf(fov*3.141592659f/180.f*.5f));
 	const float aspect = (float)width / height;
 
@@ -70,11 +72,19 @@ void VolumeRenderer::render(const Vec3& cameraPosition, const Vec3& cameraFocus,
 				int pndx = 4*(py*width+px);
 
 				// Compute the ray direction for this pixel. Same as in standard ray tracing.
+				// `px`は現在考慮しているピクセルの水平方向の位置（0から`width-1`まで）、`width`は画像の幅（ピクセル数）を表しています。
+				// まず`px+.5f`でピクセルの中心を基準に位置を取得し、それを`(float)(width-1)`で割ることで0から1の範囲に正規化しています。
+				// その後、`-.5f`を加えることで、値の範囲を-0.5から0.5に変更しています。
 				float u = -.5f + (px+.5f) / (float)(width-1);
 				u *= aspect; // Correction for square pixels on non-square image aspect ratio.
 				float v =  .5f - (py+.5f) / (float)(height-1);
 
-				Vec3 rayDirection = lookDirection * cameraPlaneDistance + camRight*u + camUp*v;
+				// カメラの視線の方向（`lookDirection`）とカメラの投影面までの距離（`cameraPlaneDistance`）を掛け合わせて、カメラの投影面上の中心点を求めています。（// カメラからスクリーンの中心へのベクトル）
+				Vec3 cam2screen_center = lookDirection * cameraPlaneDistance;
+				// 次に、`camRight*u`と`camUp*v`では、カメラの右方向ベクトル（`camRight`）と正規化された水平位置（`u`）、カメラの上方向ベクトル（`camUp`）と正規化された垂直位置（`v`）をそれぞれ掛け合わせています。
+				// これにより、ピクセルの位置に対応するカメラの投影面上の点を求めます。
+				// 最後に、これらのベクトルを全て足し合わせることで、カメラの位置から投影面上の特定の点へ向かう光線の方向（`rayDirection`）を計算します。
+				Vec3 rayDirection = cam2screen_center + camRight*u + camUp*v;
 				rayDirection.normalize();
 
 				// Initialize transmissivity to 1. We haven't "seen" anything yet.
@@ -91,6 +101,7 @@ void VolumeRenderer::render(const Vec3& cameraPosition, const Vec3& cameraFocus,
 
 				// For now, we'll assume the density has one homogenous color... White.
 				Vec3 densityColor(1,1,1);
+				Vec3 lightPosition = cameraPosition;// (0,1,0);// (1, 1, 1)
 
 				// Distance along the ray. All rays start at the camera.
 				for(float s=0.f; s<marchDistance; s += ds) {
@@ -100,27 +111,30 @@ void VolumeRenderer::render(const Vec3& cameraPosition, const Vec3& cameraFocus,
 					// things other than just grids.
 					float density = volumeData->read(rayPosition);
 
-					// Compute the amount of light that reaches this point.
-					// We'll sample the light twice as coarsely as the main integral for now.
-					float lightValue = sampleLighting(rayPosition, Vec3(0,1,0), ds);
+					// // Compute the amount of light that reaches this point.
+					// // We'll sample the light twice as coarsely as the main integral for now.
+					// float lightValue = sampleLighting(rayPosition, lightPosition, ds);
 
-					// Hint at the future... We can play with the light absorption. (You can ignore this if you want.)
-					lightValue = powf(lightValue, 3.f);
+					// // Hint at the future... We can play with the light absorption. (You can ignore this if you want.)
+					// lightValue = powf(lightValue, 3.f);
 
-					// Let's also boost the amount of light so that everything is brighter.
-					lightValue *= 5;
+					// // Let's also boost the amount of light so that everything is brighter.
+					// lightValue *= 5;
 
 					// Numerical integration of the path integral. Theory will be covered in
 					// tutorial two.
 					float dT = expf(density * -ds * kappa);
 					T *= dT;
-					finalColor += ((1.f-dT)*T/kappa)*densityColor*lightValue;
+					// finalColor += ((1.f-dT)*T/kappa)*densityColor*lightValue;
+					// finalColor += ((1.f-dT)*T/kappa)*densityColor;
+					finalColor += ((1.f-dT)*T/kappa)*densityColor;
 				}
 
 				// Write out the output of our ray march into the image buffer.
 				// We'll composite this image on top of some other color,
 				// just to demonstrate
-				Vec3 backgroundColor(0,0,0);
+				// light blue color
+				Vec3 backgroundColor(157./255., 204./255., 224./255.);//(0,0,0);//  (157, 204, 224);
 				finalColor = (1.f-T)*finalColor + T*backgroundColor;
 
 				for(int c=0;c<3;++c) {

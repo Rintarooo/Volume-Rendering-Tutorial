@@ -15,8 +15,10 @@ include_directories(
 	${OPENGL_INCLUDE_DIR}
 	# ${GLFW_INCLUDE_DIR}
 	${ImageMagick_INCLUDE_DIRS}
-	include/
+	# include/
 	Tutorial1/include/
+	Tutorial1/dependencies/stb_image/
+	# Tutorial1/dependencies/tinyobjloader/
 )
 
 add_executable(main 
